@@ -179,8 +179,8 @@ public class YggdrasilLoginScreen extends Screen {
         return false;
     }
 
-    // 1.21.10+ changed the mouse event signature to (MouseButtonEvent, boolean)
-    //#if MC >= 12110
+    // 1.21.9 changed the mouse event signature to (MouseButtonEvent, boolean)
+    //#if MC >= 12109
     //$$ @Override
     //$$ public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubled) {
     //$$     return onScreenClicked(event.x(), event.y()) || super.mouseClicked(event, doubled);

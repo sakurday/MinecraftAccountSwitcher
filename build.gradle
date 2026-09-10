@@ -21,28 +21,16 @@ preprocess {
 	// shared mojang names instead).
 	def mc1201  = createNode('1.20.1', 1_20_01, 'mojang')
 	def mc1211  = createNode('1.21.1', 1_21_01, 'mojang')
-	def mc1213  = createNode('1.21.3', 1_21_03, 'mojang')
-	def mc1214  = createNode('1.21.4', 1_21_04, 'mojang')
-	def mc1215  = createNode('1.21.5', 1_21_05, 'mojang')
-	def mc1218  = createNode('1.21.8', 1_21_08, 'mojang')
-	def mc12110 = createNode('1.21.10', 1_21_10, 'mojang')
-	def mc12111 = createNode('1.21.11', 1_21_11, 'mojang')
+	def mc1219  = createNode('1.21.9', 1_21_09, 'mojang')
 	def mc260102 = createNode('26.1.2', 26_01_02, null)
 	def mc260200 = createNode('26.2', 26_02_00, null)
 
-	// Link newer -> older. mapping-<older>-<newer>.txt: left column = older names
-	// (toward the main project 1.21.1), right column = newer names; holds renames
-	// the automatic pairwise join can't infer. Missing file = no extra mappings.
-	// (Main project is 1.21.1, the oldest node, so the left/older column is the
-	// core-side and remapping flows old -> new.)
+	// Node coverage (per-version APIs verified via mappings.dev + authlib versions):
+	//   1.21.1 covers 1.21-1.21.8 (User ctor+Type, setFormatter, authenticateServer unchanged)
+	//   1.21.9 covers 1.21.9-1.21.11 (User 5-arg, addFormatter, MouseButtonEvent started at 1.21.9)
 	mc1201.link(mc1211, file('versions/mapping-1.20.1-1.21.1.txt'))
-	mc1211.link(mc1213, file('versions/mapping-1.21.1-1.21.3.txt'))
-	mc1213.link(mc1214, file('versions/mapping-1.21.3-1.21.4.txt'))
-	mc1214.link(mc1215, file('versions/mapping-1.21.4-1.21.5.txt'))
-	mc1215.link(mc1218, file('versions/mapping-1.21.5-1.21.8.txt'))
-	mc1218.link(mc12110, file('versions/mapping-1.21.8-1.21.10.txt'))
-	mc12110.link(mc12111, file('versions/mapping-1.21.10-1.21.11.txt'))
-	mc12111.link(mc260102, file('versions/mapping-1.21.11-26.1.2.txt'))
+	mc1211.link(mc1219, file('versions/mapping-1.21.1-1.21.9.txt'))
+	mc1219.link(mc260102, file('versions/mapping-1.21.9-26.1.2.txt'))
 	mc260102.link(mc260200, file('versions/mapping-26.1.2-26.2.txt'))
 }
 

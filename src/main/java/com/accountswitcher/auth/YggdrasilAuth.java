@@ -1,7 +1,6 @@
 package com.accountswitcher.auth;
 
 import com.accountswitcher.account.AuthServer;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -10,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import java.util.UUID;
  *   {root}/sessionserver/session/minecraft/join
  */
 public class YggdrasilAuth {
-    /** A Yggdrasil game profile. */
+    /** AN Yggdrasil game profile. */
     public static class Profile {
         public String id;    // UUID without dashes
         public String name;
@@ -147,14 +146,15 @@ public class YggdrasilAuth {
 
     private static String hostOf(String url) {
         try {
-            return new URL(url).getHost();
-        } catch (IOException e) {
+            return URI.create(url).getHost();
+        } catch (IllegalArgumentException e) {
             return url;
         }
     }
 
     private static JsonObject request(String method, String url, String json) throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        // URI.create(...).toURL() avoids the URL(String) constructor deprecated for removal in Java 20+
+        HttpURLConnection conn = (HttpURLConnection) URI.create(url).toURL().openConnection();
         try {
             conn.setRequestMethod(method);
             conn.setConnectTimeout(10000);
