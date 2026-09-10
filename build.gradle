@@ -1,63 +1,76 @@
+// Multi-version preprocessor root build script.
+// Reference: Slideshow-Pro (ReplayMod/Fallen-Breath preprocessor workflow).
+
 plugins {
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
-	id 'maven-publish'
+	id 'fabric-loom' version '1.16-SNAPSHOT' apply false
+	id 'net.fabricmc.fabric-loom-remap' version '1.16-SNAPSHOT' apply false
+
+	// https://github.com/ReplayMod/preprocessor (upstream; supports extra-mappings files via link())
+	id 'com.replaymod.preprocess-root' version '221276c7d4'
+	id 'com.replaymod.preprocess' version '221276c7d4' apply false
 }
 
-version = project.mod_version
-group = project.maven_group
+preprocess {
+	// Fail the build when a mapping-file entry matches nothing (catches typos)
+	strictExtraMappings = true
 
-base {
-	archivesName = project.archives_base_name
+	// The main (core) project is read from versions/mainProject by the plugin itself.
+
+	// mappings arg: non-null = obfuscated (joined via intermediary/mojmap),
+	// null = unobfuscated (26.x ships official names; those links join by
+	// shared mojang names instead).
+	def mc1201  = createNode('1.20.1', 1_20_01, 'mojang')
+	def mc1211  = createNode('1.21.1', 1_21_01, 'mojang')
+	def mc1213  = createNode('1.21.3', 1_21_03, 'mojang')
+	def mc1214  = createNode('1.21.4', 1_21_04, 'mojang')
+	def mc1215  = createNode('1.21.5', 1_21_05, 'mojang')
+	def mc1218  = createNode('1.21.8', 1_21_08, 'mojang')
+	def mc12110 = createNode('1.21.10', 1_21_10, 'mojang')
+	def mc12111 = createNode('1.21.11', 1_21_11, 'mojang')
+	def mc260102 = createNode('26.1.2', 26_01_02, null)
+	def mc260200 = createNode('26.2', 26_02_00, null)
+
+	// Link newer -> older. mapping-<older>-<newer>.txt: left column = older names
+	// (toward the main project 1.21.1), right column = newer names; holds renames
+	// the automatic pairwise join can't infer. Missing file = no extra mappings.
+	// (Main project is 1.21.1, the oldest node, so the left/older column is the
+	// core-side and remapping flows old -> new.)
+	mc1201.link(mc1211, file('versions/mapping-1.20.1-1.21.1.txt'))
+	mc1211.link(mc1213, file('versions/mapping-1.21.1-1.21.3.txt'))
+	mc1213.link(mc1214, file('versions/mapping-1.21.3-1.21.4.txt'))
+	mc1214.link(mc1215, file('versions/mapping-1.21.4-1.21.5.txt'))
+	mc1215.link(mc1218, file('versions/mapping-1.21.5-1.21.8.txt'))
+	mc1218.link(mc12110, file('versions/mapping-1.21.8-1.21.10.txt'))
+	mc12110.link(mc12111, file('versions/mapping-1.21.10-1.21.11.txt'))
+	mc12111.link(mc260102, file('versions/mapping-1.21.11-26.1.2.txt'))
+	mc260102.link(mc260200, file('versions/mapping-26.1.2-26.2.txt'))
 }
 
-repositories {
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-}
-
-dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	// Mod is client-only and does not need the full Fabric API on the compile classpath;
-	// fabric-api is only required at runtime (its resource loader mounts the mod's lang assets).
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-}
-
-processResources {
-	filteringCharset = 'UTF-8'
-	def version = project.version
-	inputs.property "version", version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": version
+tasks.register('buildAndGather') {
+	subprojects {
+		dependsOn project.tasks.named('build').get()
+	}
+	doFirst {
+		println 'Gathering builds'
+		def buildLibs = {
+			p -> p.buildDir.toPath().resolve('libs')
+		}
+		delete fileTree(buildLibs(rootProject)) {
+			include '*'
+		}
+		subprojects {
+			copy {
+				from(buildLibs(project)) {
+					include '*.jar'
+					exclude '*-dev.jar', '*-sources.jar', '*-shadow.jar'
+				}
+				into buildLibs(rootProject)
+				duplicatesStrategy = DuplicatesStrategy.INCLUDE
+			}
+		}
 	}
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.encoding = 'UTF-8'
-	it.options.release = 25
-}
-
-java {
-	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
-}
-
-jar {
-	from("LICENSE") {
-		rename { "${it}_${project.name}" }
-	}
-}
-
-// configure the maven publication
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			from components.java
-		}
-	}
-
-	repositories {
-		// Add repositories to publish to here.
-	}
+	options.compilerArgs << '-Xlint:-processing'
 }
