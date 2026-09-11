@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "littleskin-switcher",
+	"id": "accountswitcher",
 	"version": "${version}",
-	"name": "LittleSkin Switcher",
-	"description": "在游戏内切换正版账户与 LittleSkin 皮肤站登录。默认使用正版登录，每个服务器可单独标记为使用 LittleSkin 登录。",
+	"name": "Account Switcher",
+	"description": "In-game account switcher. Premium (launcher session), third-party authlib-injector and offline accounts; third-party passwords are never stored.",
 	"authors": [
 		"sakurday"
 	],
@@ -11,16 +11,16 @@
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"com.littleskin.switcher.LittleSkinSwitcher"
+			"com.accountswitcher.AccountSwitcher"
 		]
 	},
 	"mixins": [
-		"littleskin-switcher.mixins.json"
+		"accountswitcher.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.19.3",
-		"fabric-api": ">=0.155.2",
-		"minecraft": "~26.1.2",
-		"java": ">=25"
+		"fabricloader": ">=0.15.0",
+		"fabric-api": "*",
+		"minecraft": "${minecraft_range}",
+		"java": ">=17"
 	}
 }

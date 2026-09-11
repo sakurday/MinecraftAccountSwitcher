@@ -1,0 +1,14 @@
+{
+	"required": false,
+	"package": "com.accountswitcher.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"client": [
+		"MinecraftAccessor",
+		"ScreenAccessor",
+		"JoinMultiplayerScreenMixin",
+		"ClientHandshakePacketListenerImplMixin"
+	],
+	"injectors": {
+		"defaultRequire": 0
+	}
+}

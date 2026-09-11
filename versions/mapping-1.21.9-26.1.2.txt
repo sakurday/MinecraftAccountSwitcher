@@ -1,0 +1,10 @@
+# 26.1.2 GUI rework, names shared with 1.21.11
+# Left column = names closer to the main project (1.21.1), right = this version.
+# GuiGraphics was renamed to GuiGraphicsExtractor
+net.minecraft.client.gui.GuiGraphics net.minecraft.client.gui.GuiGraphicsExtractor
+# drawCenteredString -> centeredText (same parameter list)
+net.minecraft.client.gui.GuiGraphics drawCenteredString() centeredText()
+# drawString -> text (all overloads; return type differs, source-level rename only)
+net.minecraft.client.gui.GuiGraphics drawString() text()
+# Screen.render override became Screen.extractRenderState
+net.minecraft.client.gui.screens.Screen render() extractRenderState()

@@ -1,0 +1,4 @@
+# 26.2, names shared with 26.1.2
+# Left column = names closer to the main project (1.21.1), right = this version.
+# Minecraft.setScreen was removed; setScreenAndShow is the replacement
+net.minecraft.client.Minecraft setScreen() setScreenAndShow()

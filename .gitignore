@@ -1,5 +1,6 @@
 .gradle/
 build/
+bin/
 run/
 .out/
 *.iml
@@ -7,3 +8,4 @@ run/
 .vscode/
 .build-cache/
 .claude/
+*.class

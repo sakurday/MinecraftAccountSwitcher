@@ -1,0 +1,4 @@
+# 1.21.10, names shared with 1.21.8
+# Left column = names closer to the main project (1.21.1), right = this version.
+# EditBox.setFormatter was renamed to addFormatter (same signature)
+net.minecraft.client.gui.components.EditBox setFormatter() addFormatter()
